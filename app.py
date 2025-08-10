@@ -1,10 +1,10 @@
-from flask import Flask, render_template
+import os
+from flask import Flask
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+# Read secret key from environment
+app.secret_key = os.environ.get("SECRET_KEY", "dev-fallback-key")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# Read FLASK_ENV from environment (optional)
+flask_env = os.environ.get("FLASK_ENV", "development")
