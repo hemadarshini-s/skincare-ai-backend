@@ -18,32 +18,45 @@ if flask_env != "production":
 def home():
     return "Flask app is running!"
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["GET", "POST"])
 def predict():
-    try:
-        data = request.get_json()
+    if request.method == "GET":
+        # Simple example for browser test
+        return """
+        <h2>Skincare AI Predictor</h2>
+        <p>Send a POST request with JSON:</p>
+        <pre>{
+  "product": "salicylic acid + retinol",
+  "time": "morning"
+}</pre>
+        """
 
-        # Example simple logic for skincare ingredient compatibility
-        product = data.get("product", "").lower()
-        time = data.get("time", "").lower()
+    if request.method == "POST":
+        try:
+            data = request.get_json()
 
-        if "salicylic acid" in product and "retinol" in product:
-            result = "Avoid using salicylic acid and retinol together. Use one in the morning and the other at night."
-        elif "salicylic acid" in product:
-            result = "Best used in the morning with sunscreen."
-        elif "retinol" in product:
-            result = "Best used at night to avoid sun sensitivity."
-        else:
-            result = "No special restrictions for this ingredient."
+            product = data.get("product", "").lower()
+            time = data.get("time", "").lower()
 
-        return jsonify({
-            "product": product,
-            "time": time,
-            "advice": result
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+            if "salicylic acid" in product and "retinol" in product:
+                result = "Avoid using salicylic acid and retinol together. Use one in the morning and the other at night."
+            elif "salicylic acid" in product:
+                result = "Best used in the morning with sunscreen."
+            elif "retinol" in product:
+                result = "Best used at night to avoid sun sensitivity."
+            else:
+                result = "No special restrictions for this ingredient."
+
+            return jsonify({
+                "product": product,
+                "time": time,
+                "advice": result
+            })
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
-    # Default to 0.0.0.0 for Render
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+
+    
