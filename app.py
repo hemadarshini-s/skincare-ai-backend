@@ -29,7 +29,7 @@ def predict():
         return jsonify({"warning": "Avoid using salicylic acid with retinol together"})
     else:
         return jsonify({"message": f"Safe to use in {time}"})
->
+
     
 
     if request.method == "POST":
