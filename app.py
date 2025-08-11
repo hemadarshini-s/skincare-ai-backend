@@ -30,7 +30,7 @@ def predict():
     else:
         return jsonify({"message": f"Safe to use in {time}"})
 >
-        """
+    
 
     if request.method == "POST":
         try:
