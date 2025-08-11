@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -17,6 +17,32 @@ if flask_env != "production":
 @app.route("/")
 def home():
     return "Flask app is running!"
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    try:
+        data = request.get_json()
+
+        # Example simple logic for skincare ingredient compatibility
+        product = data.get("product", "").lower()
+        time = data.get("time", "").lower()
+
+        if "salicylic acid" in product and "retinol" in product:
+            result = "Avoid using salicylic acid and retinol together. Use one in the morning and the other at night."
+        elif "salicylic acid" in product:
+            result = "Best used in the morning with sunscreen."
+        elif "retinol" in product:
+            result = "Best used at night to avoid sun sensitivity."
+        else:
+            result = "No special restrictions for this ingredient."
+
+        return jsonify({
+            "product": product,
+            "time": time,
+            "advice": result
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
     # Default to 0.0.0.0 for Render
