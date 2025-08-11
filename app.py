@@ -18,17 +18,18 @@ if flask_env != "production":
 def home():
     return "Flask app is running!"
 
-@app.route("/predict", methods=["GET", "POST"])
+@app.route('/predict', methods=['POST'])
 def predict():
-    if request.method == "GET":
-        # Simple example for browser test
-        return """
-        <h2>Skincare AI Predictor</h2>
-        <p>Send a POST request with JSON:</p>
-        <pre>{
-  "product": "salicylic acid + retinol",
-  "time": "morning"
-}</pre>
+    data = request.get_json()
+    product = data.get("product")
+    time = data.get("time")
+
+    # Example dummy logic
+    if "salicylic acid" in product.lower() and "retinol" in product.lower():
+        return jsonify({"warning": "Avoid using salicylic acid with retinol together"})
+    else:
+        return jsonify({"message": f"Safe to use in {time}"})
+>
         """
 
     if request.method == "POST":
